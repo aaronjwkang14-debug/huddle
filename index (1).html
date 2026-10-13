@@ -1,0 +1,1239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Huddle</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MCA0MCI+PHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiByeD0iOSIgZmlsbD0iI2UxMWQyZSIvPjxwYXRoIGQ9Ik04IDExYTQgNCAwIDAgMSA0LTRoMTZhNCA0IDAgMCAxIDQgNHYxMWE0IDQgMCAwIDEtNCA0SDE4bC02IDV2LTVhNCA0IDAgMCAxLTQtNHoiIGZpbGw9IiNmZmYiLz48Y2lyY2xlIGN4PSIxNC41IiBjeT0iMTYuNSIgcj0iMi4xIiBmaWxsPSIjZTExZDJlIi8+PGNpcmNsZSBjeD0iMjAiIGN5PSIxNi41IiByPSIyLjEiIGZpbGw9IiNlMTFkMmUiLz48Y2lyY2xlIGN4PSIyNS41IiBjeT0iMTYuNSIgcj0iMi4xIiBmaWxsPSIjZTExZDJlIi8+PC9zdmc+">
+<link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MCA0MCI+PHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiByeD0iOSIgZmlsbD0iI2UxMWQyZSIvPjxwYXRoIGQ9Ik04IDExYTQgNCAwIDAgMSA0LTRoMTZhNCA0IDAgMCAxIDQgNHYxMWE0IDQgMCAwIDEtNCA0SDE4bC02IDV2LTVhNCA0IDAgMCAxLTQtNHoiIGZpbGw9IiNmZmYiLz48Y2lyY2xlIGN4PSIxNC41IiBjeT0iMTYuNSIgcj0iMi4xIiBmaWxsPSIjZTExZDJlIi8+PGNpcmNsZSBjeD0iMjAiIGN5PSIxNi41IiByPSIyLjEiIGZpbGw9IiNlMTFkMmUiLz48Y2lyY2xlIGN4PSIyNS41IiBjeT0iMTYuNSIgcj0iMi4xIiBmaWxsPSIjZTExZDJlIi8+PC9zdmc+">
+<meta name="theme-color" content="#e11d2e">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f6f7; --panel:#ffffff; --panel2:#f1f1f3; --border:#e2e2e6;
+  --text:#111111; --muted:#6b6b73; --accent:#e11d2e; --accent2:#b3121f;
+  --mine:#e11d2e; --theirs:#ffffff; --danger:#e11d2e; --ok:#16a34a; --gold:#111111;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--bg);color:var(--text);font-family:Nunito,system-ui,sans-serif;overflow:hidden}
+button,input{font-family:inherit;font-size:inherit;color:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+
+/* ---------- auth ---------- */
+#auth{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:16px;
+  background:radial-gradient(circle at 20% 10%,rgba(225,29,46,.08),transparent 50%),var(--bg)}
+.auth-card{width:100%;max-width:380px;background:var(--panel);border:1px solid var(--border);border-radius:18px;padding:28px 24px;box-shadow:0 12px 40px rgba(0,0,0,.08)}
+.logo{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:6px}
+.logo svg{width:38px;height:38px}
+.logo h1{font-size:28px;font-weight:900;letter-spacing:.5px}
+.sub{text-align:center;color:var(--muted);font-size:14px;margin-bottom:20px}
+.tabs{display:flex;background:var(--panel2);border-radius:10px;padding:4px;margin-bottom:16px}
+.tabs button{flex:1;border:none;background:none;padding:9px;border-radius:8px;font-weight:800;color:var(--muted)}
+.tabs button.on{background:#111;color:#fff}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:12px;font-weight:800;color:var(--muted);margin-bottom:5px}
+.field input,.inp{width:100%;padding:11px 12px;border-radius:10px;border:1px solid var(--border);background:var(--panel2);outline:none}
+.field input:focus,.inp:focus{border-color:var(--accent)}
+.btn{width:100%;padding:12px;border:none;border-radius:10px;background:#111;color:#fff;font-weight:900}
+.btn:hover:not(:disabled){background:var(--accent)}
+.btn:disabled{opacity:.55;cursor:default}
+.btn.ghost{background:var(--panel2);border:1px solid var(--border);color:var(--text)}
+.btn.ghost:hover:not(:disabled){background:#e8e8ec}
+.btn.red{background:var(--danger)}
+.msg{font-size:13px;font-weight:700;border-radius:8px;padding:9px 11px;margin-bottom:12px}
+.msg.err{background:#fdecee;color:#b3121f;border:1px solid #f5b5bb}
+.msg.good{background:#eafaf0;color:#15803d;border:1px solid #b7e8c7}
+
+/* ---------- app ---------- */
+#app{display:flex;height:100%}
+.side{width:320px;flex:none;background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;min-height:0}
+.side-top{display:flex;align-items:center;gap:8px;padding:14px 14px 10px}
+.side-top .logo{margin:0}
+.side-top .logo h1{font-size:20px}
+.side-top .logo svg{width:28px;height:28px}
+.me-btn{margin-left:auto;display:flex;align-items:center;gap:7px;background:var(--panel2);border:1px solid var(--border);border-radius:999px;padding:4px 10px 4px 4px;font-weight:800;font-size:13px;max-width:150px}
+.me-btn span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.seg{display:flex;gap:6px;padding:0 14px 10px}
+.seg button{flex:1;border:1px solid var(--border);background:var(--panel2);border-radius:9px;padding:8px;font-weight:800;font-size:13px;color:var(--muted);position:relative}
+.seg button.on{color:#fff;border-color:#111;background:#111}
+.badge{display:inline-block;min-width:18px;height:18px;line-height:18px;border-radius:9px;background:var(--danger);color:#fff;font-size:11px;font-weight:900;padding:0 5px;margin-left:5px}
+.side-actions{padding:0 14px 10px;display:flex;gap:6px}
+.side-actions .inp{padding:8px 10px;font-size:13px}
+.side-actions button{flex:none;border:none;border-radius:9px;background:#111;color:#fff;font-weight:900;padding:0 12px;white-space:nowrap;font-size:13px}
+.list{flex:1;overflow-y:auto;padding:4px 8px 12px}
+.row{display:flex;align-items:center;gap:10px;padding:9px 8px;border-radius:10px;cursor:pointer;width:100%;border:none;background:none;text-align:left}
+.row:hover{background:var(--panel2)}
+.row.on{background:#fdecee}
+.row .meta{flex:1;min-width:0}
+.row .nm{font-weight:800;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .pv{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .tm{font-size:11px;color:var(--muted);flex:none;align-self:flex-start;margin-top:3px}
+.row.unread .nm{color:#000}
+.row.unread .pv{color:var(--text);font-weight:800}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--accent);flex:none}
+.empty{color:var(--muted);font-size:13px;text-align:center;padding:24px 12px;line-height:1.5}
+.av{width:38px;height:38px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:15px;text-transform:uppercase}
+.av.sm{width:28px;height:28px;font-size:12px}
+.av.grp{border-radius:11px}
+
+.main{flex:1;display:flex;flex-direction:column;min-width:0;min-height:0}
+.chat-head{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border);background:var(--panel)}
+.chat-head .t{font-weight:900;font-size:16px}
+.chat-head .s{font-size:12px;color:var(--muted)}
+.chat-head .back{display:none;border:none;background:none;font-size:22px;padding:0 6px 0 0;color:var(--text)}
+.chat-head .more{margin-left:auto;border:1px solid var(--border);background:var(--panel2);border-radius:9px;padding:6px 11px;font-weight:800;font-size:13px}
+.msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:3px}
+.day{align-self:center;font-size:11px;font-weight:800;color:var(--muted);background:var(--panel2);border-radius:999px;padding:3px 10px;margin:10px 0 6px}
+.b-wrap{display:flex;flex-direction:column;max-width:72%}
+.b-wrap.mine{align-self:flex-end;align-items:flex-end}
+.b-wrap.theirs{align-self:flex-start;align-items:flex-start}
+.b-from{font-size:12px;font-weight:800;color:var(--muted);margin:8px 0 2px 4px}
+.b-from.dev{color:#111}
+.bubble{padding:8px 12px;border-radius:16px;font-size:14.5px;line-height:1.4;white-space:pre-wrap;word-break:break-word}
+.mine .bubble{background:var(--mine);color:#fff;border-bottom-right-radius:5px}
+.theirs .bubble{background:var(--theirs);border:1px solid var(--border);border-bottom-left-radius:5px}
+.bubble img{display:block;max-width:240px;max-height:300px;border-radius:10px;cursor:pointer}
+.b-time{font-size:10.5px;color:var(--muted);margin:2px 6px 0}
+.pending .bubble{opacity:.6}
+.failed .b-time{color:var(--accent)}
+.composer{display:flex;gap:8px;padding:10px 12px;border-top:1px solid var(--border);background:var(--panel);align-items:flex-end}
+.composer textarea{flex:1;resize:none;max-height:120px;min-height:42px;padding:10px 12px;border-radius:12px;border:1px solid var(--border);background:var(--panel2);outline:none;font-family:inherit;font-size:14.5px;color:var(--text)}
+.composer textarea:focus{border-color:var(--accent)}
+.composer textarea.bad{border-color:var(--accent);background:#fdecee;animation:shake .3s}
+@keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.icon-btn{width:42px;height:42px;flex:none;border-radius:12px;border:1px solid var(--border);background:var(--panel2);display:flex;align-items:center;justify-content:center}
+.icon-btn svg{width:20px;height:20px}
+.send{background:var(--accent);border-color:var(--accent);color:#fff}
+.nf-bar{padding:14px 16px;border-top:1px solid var(--border);background:var(--panel);display:flex;align-items:center;gap:10px;font-size:14px;font-weight:700;color:var(--muted);flex-wrap:wrap}
+.nf-bar .btn{width:auto;padding:8px 14px;font-size:13px}
+.sec-h{font-size:11px;font-weight:900;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;padding:12px 8px 4px}
+.mini{flex:none;border:1px solid var(--border);background:var(--panel2);border-radius:8px;padding:6px 10px;font-weight:800;font-size:12px;color:var(--text)}
+.mini.go{background:#111;border-color:#111;color:#fff}
+.mini.go:hover{background:var(--accent);border-color:var(--accent)}
+.mini.no:hover{color:var(--accent);border-color:var(--accent)}
+.mini:disabled{opacity:.6;cursor:default}
+.row.static{cursor:default}
+.row.static:hover{background:none}
+.welcome{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--muted);text-align:center;padding:20px}
+.welcome svg{width:64px;height:64px;opacity:.85}
+.welcome h2{color:var(--text);font-size:22px}
+
+/* ---------- modal + toast ---------- */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;padding:16px;z-index:50}
+.modal{width:100%;max-width:420px;max-height:86vh;overflow-y:auto;background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.15)}
+.modal h3{font-size:18px;margin-bottom:12px}
+.modal .sect{margin-top:16px;padding-top:14px;border-top:1px solid var(--border)}
+.modal .sect h4{font-size:13px;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.chip{display:flex;align-items:center;gap:5px;background:var(--panel2);border:1px solid var(--border);border-radius:999px;padding:4px 6px 4px 10px;font-size:13px;font-weight:700}
+.chip button{border:none;background:none;color:var(--muted);font-size:15px;line-height:1;padding:0 3px}
+.pick{max-height:200px;overflow-y:auto;border:1px solid var(--border);border-radius:10px;margin-top:6px}
+.pick .row{border-radius:0;padding:7px 10px}
+.row-btns{display:flex;gap:8px;margin-top:14px}
+.row-btns .btn{flex:1}
+#toasts{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:99;display:flex;flex-direction:column;gap:6px;align-items:center;pointer-events:none}
+.toast{background:#111;color:#fff;border:1px solid #111;border-radius:10px;padding:9px 14px;font-weight:800;font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,.18);max-width:90vw}
+.toast.warn{background:var(--accent);border-color:var(--accent);color:#fff}
+.toast.ok{border-left:4px solid var(--accent)}
+.dev-tag{font-size:10px;font-weight:900;color:#fff;background:#111;border-radius:4px;padding:1px 4px;margin-left:5px;vertical-align:middle}
+
+@media (max-width:760px){
+  .side{width:100%;border-right:none}
+  #app.chatting .side{display:none}
+  #app:not(.chatting) .main{display:none}
+  .chat-head .back{display:block}
+  .b-wrap{max-width:84%}
+}
+.side-actions button:hover{background:var(--accent)}
+.send:hover{background:var(--accent2)}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="logo" viewBox="0 0 40 40">
+    <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e11d2e"/><stop offset="1" stop-color="#b3121f"/></linearGradient></defs>
+    <path d="M6 9a5 5 0 0 1 5-5h18a5 5 0 0 1 5 5v13a5 5 0 0 1-5 5H17l-7 6v-6a5 5 0 0 1-4-5z" fill="url(#lg)"/>
+    <circle cx="14" cy="15.5" r="2.3" fill="#fff"/><circle cx="20" cy="15.5" r="2.3" fill="#fff"/><circle cx="26" cy="15.5" r="2.3" fill="#fff"/>
+  </symbol>
+</svg>
+
+<!-- ============ AUTH ============ -->
+<div id="auth">
+  <div class="auth-card">
+    <div class="logo"><svg><use href="#logo"/></svg><h1>Huddle</h1></div>
+    <div class="sub">Chat with your people</div>
+    <div class="tabs"><button id="tab-login" class="on" onclick="authTab('login')">Log In</button><button id="tab-signup" onclick="authTab('signup')">Sign Up</button></div>
+    <div id="auth-msg" class="msg hidden"></div>
+    <form id="f-login" onsubmit="doLogin();return false">
+      <div class="field"><label>Username</label><input id="li-user" autocomplete="username" placeholder="Enter username"></div>
+      <div class="field"><label>Password</label><input id="li-pass" type="password" autocomplete="current-password" placeholder="Enter password"></div>
+      <button class="btn" id="li-btn">Log In</button>
+    </form>
+    <form id="f-signup" class="hidden" onsubmit="doSignup();return false">
+      <div class="field"><label>Username</label><input id="su-user" autocomplete="username" placeholder="Choose a username"></div>
+      <div class="field"><label>Password</label><input id="su-pass" type="password" autocomplete="new-password" placeholder="Choose a password"></div>
+      <div class="field"><label>Confirm Password</label><input id="su-pass2" type="password" autocomplete="new-password" placeholder="Type it again"></div>
+      <button class="btn" id="su-btn">Create Account</button>
+    </form>
+  </div>
+</div>
+
+<!-- ============ APP ============ -->
+<div id="app" class="hidden">
+  <aside class="side">
+    <div class="side-top">
+      <div class="logo"><svg><use href="#logo"/></svg><h1>Huddle</h1></div>
+      <button class="me-btn" onclick="openAccount()"><div class="av sm" id="me-av"></div><span id="me-name"></span></button>
+    </div>
+    <div class="seg">
+      <button id="seg-dm" class="on" onclick="setTab('dm')">Messages<span class="badge hidden" id="bdg-dm"></span></button>
+      <button id="seg-gc" onclick="setTab('gc')">Groups<span class="badge hidden" id="bdg-gc"></span></button>
+      <button id="seg-fr" onclick="setTab('fr')">Friends<span class="badge hidden" id="bdg-fr"></span></button>
+    </div>
+    <div class="side-actions" id="act-dm">
+      <input class="inp" id="dm-search" placeholder="Find someone to message…" oninput="renderSide()">
+    </div>
+    <div class="side-actions hidden" id="act-fr">
+      <input class="inp" id="fr-search" placeholder="Search usernames to add…" oninput="renderSide()">
+    </div>
+    <div class="side-actions hidden" id="act-gc">
+      <button style="flex:1;padding:9px" onclick="openNewGroup()">+ New group chat</button>
+    </div>
+    <div class="list" id="side-list"></div>
+  </aside>
+
+  <main class="main">
+    <div class="welcome" id="welcome">
+      <svg><use href="#logo"/></svg>
+      <h2>Welcome to Huddle</h2>
+      <div>Pick a conversation, or search for someone to start one.</div>
+    </div>
+    <div id="chat" class="hidden" style="display:flex;flex-direction:column;flex:1;min-height:0">
+      <div class="chat-head">
+        <button class="back" onclick="closeChat()">‹</button>
+        <div class="av" id="ch-av"></div>
+        <div><div class="t" id="ch-title"></div><div class="s" id="ch-sub"></div></div>
+        <button class="more hidden" id="ch-more" onclick="openGroupInfo()">Group info</button>
+      </div>
+      <div class="msgs" id="msgs"></div>
+      <div class="nf-bar hidden" id="nf-bar"></div>
+      <div class="composer" id="composer">
+        <button class="icon-btn" title="Send a photo" onclick="document.getElementById('photo-in').click()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="9" cy="11" r="2"/><path d="m21 16-5-5-8 8"/></svg>
+        </button>
+        <input type="file" id="photo-in" accept="image/*" class="hidden" onchange="sendPhoto(this)">
+        <textarea id="compose" rows="1" placeholder="Message…" maxlength="2000"></textarea>
+        <button class="icon-btn send" title="Send" onclick="sendText()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg>
+        </button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div id="modal-root"></div>
+<div id="toasts"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  // =====================================================================
+  //  YOUR SUPABASE PROJECT — paste your two values between the quotes
+  //  (Supabase → Project Settings → API / API Keys)
+  // =====================================================================
+  var SB  = "https://pmztsmwnzxtvuxeaflqy.supabase.co";        // looks like https://abcdefgh.supabase.co
+  var KEY = "sb_publishable_CbI5Br-V8A1vtSlNnQK8UA_dm0Buh0e";    // starts with sb_publishable_  (or the "anon" key)
+  // =====================================================================
+  SB = SB.trim().replace(/\/+$/, "").replace(/\/rest\/v1$/, "");
+  var HDR = { "apikey": KEY, "Content-Type": "application/json" };
+  var DEV_USERS = ["dminfork"];
+  var EVERYONE = "Everyone";
+  var GRP = "grp::", DEVICES = "devices::";
+  var NAME_RE = /^[A-Za-z0-9_.\-À-ÖØ-öø-ɏЀ-ӿก-ฺเ-๎ぁ-ゖァ-ヺー一-鿿가-힣]+$/;
+
+  function withTimeout(p, ms) {
+    return new Promise(function (res, rej) {
+      var t = setTimeout(function () { rej(new Error("timeout")); }, ms);
+      p.then(function (v) { clearTimeout(t); res(v); }, function (e) { clearTimeout(t); rej(e); });
+    });
+  }
+  // Reads: key in the URL and no custom headers, so school/network filters don't stall them.
+  function get(path, ms) {
+    var url = SB + "/rest/v1/" + path + (path.indexOf("?") === -1 ? "?" : "&") + "apikey=" + encodeURIComponent(KEY);
+    return withTimeout(fetch(url), ms || 15000).then(function (r) {
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      return r.json();
+    });
+  }
+  function send(method, path, body, prefer) {
+    var h = Object.assign({}, HDR); if (prefer) h.Prefer = prefer;
+    return withTimeout(fetch(SB + "/rest/v1/" + path, { method: method, headers: h, body: body ? JSON.stringify(body) : undefined }), 30000);
+  }
+  // Plain form writes skip the extra permission request; fall back to JSON if refused.
+  var plainOk = null;
+  function postRow(table, row) {
+    function json() { return send("POST", table, row); }
+    if (plainOk === false || typeof URLSearchParams === "undefined") return json();
+    var f = new URLSearchParams();
+    Object.keys(row).forEach(function (k) { if (row[k] != null) f.append(k, String(row[k])); });
+    return withTimeout(fetch(SB + "/rest/v1/" + table + "?apikey=" + encodeURIComponent(KEY), { method: "POST", body: f }), 60000).then(function (r) {
+      if (r.ok || r.status === 409) { plainOk = true; return r; }
+      return r.text().then(function (t) {
+        if ((r.status === 415 || /content.?type|media type|urlencoded|unsupported/i.test(t)) && plainOk !== true) { plainOk = false; return json(); }
+        return new Response(t, { status: r.status });
+      });
+    });
+  }
+  function enc(v) { return encodeURIComponent(v); }
+  function pgq(v) { return encodeURIComponent('"' + String(v).replace(/\\/g, "\\\\").replace(/"/g, '\\"') + '"'); }
+  function parseData(d) { if (typeof d === "string") { try { return JSON.parse(d); } catch (e) { return null; } } return d; }
+
+  // ================= LOCAL STORAGE =================
+  function ls(k, v) {
+    try {
+      if (v === undefined) { var s = localStorage.getItem(k); return s == null ? null : JSON.parse(s); }
+      if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, JSON.stringify(v));
+    } catch (e) { return null; }
+  }
+  function cookie(name, val) {
+    try {
+      if (val === undefined) { var m = document.cookie.match(new RegExp("(?:^|; )" + name + "=([^;]*)")); return m ? decodeURIComponent(m[1]) : null; }
+      document.cookie = name + "=" + (val === null ? "; max-age=0" : enc(val) + "; max-age=" + 157680000) + "; path=/; SameSite=Lax";
+    } catch (e) { return null; }
+  }
+
+  // ================= HELPERS =================
+  function $(id) { return document.getElementById(id); }
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  function low(s) { return String(s || "").toLowerCase(); }
+  function showName(n) { return low(n) === "dminfork" ? "dminFoRk" : n; }
+  function toast(text, kind) {
+    var el = document.createElement("div"); el.className = "toast " + (kind || ""); el.textContent = text;
+    $("toasts").appendChild(el);
+    setTimeout(function () { el.remove(); }, 3800);
+  }
+  var COLORS = ["#111111", "#e11d2e", "#3a3a40", "#b3121f", "#55555c", "#c81e36", "#26262b", "#8f1020"];
+  function colorFor(n) { var h = 0; n = low(n); for (var i = 0; i < n.length; i++) h = (h * 31 + n.charCodeAt(i)) | 0; return COLORS[Math.abs(h) % COLORS.length]; }
+  function avatar(name, cls) {
+    var n = String(name || "?");
+    return '<div class="av ' + (cls || "") + '" style="background:' + colorFor(n) + '">' + esc(Array.from(n)[0] || "?") + "</div>";
+  }
+  function fmtTime(ts) {
+    var d = new Date(ts), h = d.getHours(), m = d.getMinutes(), ap = h >= 12 ? "PM" : "AM";
+    h = h % 12 || 12; return h + ":" + (m < 10 ? "0" : "") + m + " " + ap;
+  }
+  function fmtShort(ts) {
+    if (!ts) return "";
+    var d = new Date(ts), now = new Date();
+    if (d.toDateString() === now.toDateString()) return fmtTime(ts);
+    var y = new Date(now); y.setDate(now.getDate() - 1);
+    if (d.toDateString() === y.toDateString()) return "Yesterday";
+    return d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+  }
+  function fmtDay(ts) {
+    var d = new Date(ts), now = new Date();
+    if (d.toDateString() === now.toDateString()) return "Today";
+    var y = new Date(now); y.setDate(now.getDate() - 1);
+    if (d.toDateString() === y.toDateString()) return "Yesterday";
+    return d.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric", year: d.getFullYear() === now.getFullYear() ? undefined : "numeric" });
+  }
+
+  // ================= STATE =================
+  var me = null;            // lowercase username
+  var devSet = {};          // lowercase names with dev powers
+  var allUsers = [];        // [{username}]
+  var dmConvos = {};        // other -> {last:{from,text,time,image?}}
+  var groups = [];          // [{name,members,creator,createdAt}]
+  var groupLast = {};       // groupKey -> last msg
+  var friends = [], reqIn = [], reqOut = [];   // lowercase names
+  var tab = "dm";
+  var open = null;          // {type:"dm", who} | {type:"gc", name}
+  var thread = [];          // messages in the open chat
+  var pending = ls("hd_pending") || [];   // unsent messages (survive refresh)
+  var readMap = ls("hd_read") || {};      // chatKey -> last read time
+
+  function isDev(n) { n = low(n); return DEV_USERS.indexOf(n) !== -1 || !!devSet[n]; }
+  function chatKey(o) { return o.type === "dm" ? "dm:" + low(o.who) : "gc:" + low(o.name); }
+  function pair(a, b) { return [low(a), low(b)].sort(); }
+
+  // ================= DEVICE RULE =================
+  // One account per device; devs can make and use more.
+  function deviceId() {
+    var id = ls("rs_device_id") || cookie("fork_did");
+    if (!id) id = "d" + Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
+    ls("rs_device_id", id); cookie("fork_did", id);
+    return id;
+  }
+  function deviceOwner() { return low(ls("rs_device_owner") || cookie("fork_owner") || "") || null; }
+  function setDeviceOwner(u) { ls("rs_device_owner", low(u)); cookie("fork_owner", low(u)); }
+
+  function loadDevs() {
+    return get("granted_devs?select=username", 8000).then(function (rows) {
+      var d = {}; rows.forEach(function (r) { var n = low(r.username).replace(/^pro:/, ""); if (n) d[n] = 1; });
+      devSet = d; return d;
+    }).catch(function () { return devSet; });
+  }
+  // accounts already tied to this device
+  function accountsOnDevice() {
+    var id = deviceId();
+    return Promise.all([
+      get("avatars?username=like." + enc(DEVICES + "*") + "&select=username,data", 12000),
+      get("users?select=username", 12000)
+    ]).then(function (res) {
+      var exists = {}; res[1].forEach(function (r) { exists[low(r.username)] = 1; });
+      var names = [];
+      res[0].forEach(function (row) {
+        var d = parseData(row.data), n = low(row.username).slice(DEVICES.length);
+        if (d && Array.isArray(d.ids) && d.ids.indexOf(id) !== -1 && exists[n] && names.indexOf(n) === -1) names.push(n);
+      });
+      (ls("rs_made_here") || []).forEach(function (n) { n = low(n); if (exists[n] && names.indexOf(n) === -1) names.push(n); });
+      return names;
+    });
+  }
+  function recordDevice(u) {
+    var id = deviceId(), key = DEVICES + low(u);
+    get("avatars?username=eq." + enc(key) + "&select=data", 10000).then(function (rows) {
+      var d = rows[0] ? parseData(rows[0].data) : null, ids = (d && Array.isArray(d.ids)) ? d.ids : [];
+      if (ids.indexOf(id) !== -1) return;
+      ids.push(id); ids = ids.slice(-15);
+      if (rows.length) return send("PATCH", "avatars?username=eq." + enc(key), { data: { ids: ids } });
+      return send("POST", "avatars", { username: key, data: { ids: ids } });
+    }).catch(function () {});
+  }
+  // → null if allowed, otherwise an error message
+  function deviceBlockFor(u, signingUp) {
+    u = low(u);
+    if (isDev(u)) return Promise.resolve(null);
+    var owner = deviceOwner();
+    return accountsOnDevice().then(function (names) {
+      if (names.some(isDev) || (owner && isDev(owner))) return null;      // a dev's device can do anything
+      var current = owner && names.indexOf(owner) !== -1 ? owner : names[0];
+      if (!current) return null;
+      if (signingUp) return "This device already has an account (@" + showName(current) + "). Only one account per device.";
+      if (current === u) return null;
+      if (owner && names.indexOf(owner) === -1 && names.indexOf(u) !== -1) return null;
+      return "This device belongs to @" + showName(current) + ". Only one account per device.";
+    }, function () {
+      // server unreachable: go by what this device remembers
+      if (signingUp && owner) return "This device already has an account (@" + showName(owner) + ").";
+      if (!signingUp && owner && owner !== u && !isDev(owner)) return "This device belongs to @" + showName(owner) + ".";
+      return null;
+    });
+  }
+
+  // ================= BANS =================
+  function banStatus(u) {
+    u = low(u); var dev = "device:" + deviceId();
+    return Promise.all([
+      get("banned_users?or=(username.eq." + pgq(u) + ",username.eq." + pgq(dev) + ")&select=username", 8000).catch(function () { return []; }),
+      get("timed_bans?or=(username.eq." + pgq(u) + ",username.eq." + pgq(dev) + ")&select=until", 8000).catch(function () { return []; }),
+      get("frozen_users?username=eq." + enc(u) + "&select=until", 8000).catch(function () { return []; })
+    ]).then(function (r) {
+      if (r[0].length) return "This account is banned.";
+      var t = r[1].map(function (x) { return new Date(x.until).getTime(); }).filter(function (x) { return x > Date.now(); });
+      if (t.length) return "You're banned until " + new Date(Math.max.apply(null, t)).toLocaleString() + ".";
+      var f = r[2].map(function (x) { return new Date(x.until).getTime(); }).filter(function (x) { return x > Date.now(); });
+      if (f.length) return "This account is frozen until " + new Date(Math.max.apply(null, f)).toLocaleString() + ".";
+      return null;
+    });
+  }
+
+  // ================= AUTH =================
+  window.authTab = function (t) {
+    $("tab-login").classList.toggle("on", t === "login");
+    $("tab-signup").classList.toggle("on", t === "signup");
+    $("f-login").classList.toggle("hidden", t !== "login");
+    $("f-signup").classList.toggle("hidden", t !== "signup");
+    authMsg("");
+  };
+  function authMsg(text, good) {
+    var el = $("auth-msg");
+    el.className = "msg " + (good ? "good" : "err") + (text ? "" : " hidden");
+    el.textContent = text || "";
+  }
+  function busy(btn, on, label) { btn.disabled = on; btn.textContent = label; }
+
+  // Asks the server if username + password match. true / false, or null if the server couldn't be reached.
+  function checkLogin(u, p) {
+    return withTimeout(fetch(SB + "/rest/v1/rpc/check_login?u=" + enc(u) + "&p=" + enc(p) + "&apikey=" + enc(KEY)), 15000).then(function (r) {
+      if (r.ok) return r.json().then(function (v) { return v === true || v === "true"; });
+      // check_login missing on the server → old way (compare the stored password)
+      return get("users?username=eq." + enc(u) + "&select=password").then(function (rows) { return !!(rows[0] && rows[0].password === p); });
+    }).catch(function () { return null; });
+  }
+  // Built-in dev account (same password fingerprint Elevated Fork uses)
+  var DEV_HASH = "c5c61d09492e8b150854e45d95a47c9df3e90fc089d21ba82ba8f4985506f2ca";
+  function devBuiltinOk(u, p) {
+    if (DEV_USERS.indexOf(u) === -1 || !(window.crypto && crypto.subtle && window.TextEncoder)) return Promise.resolve(false);
+    return crypto.subtle.digest("SHA-256", new TextEncoder().encode("elevated-fork:dminfork:" + p)).then(function (buf) {
+      var hex = Array.prototype.map.call(new Uint8Array(buf), function (b) { return ("0" + b.toString(16)).slice(-2); }).join("");
+      return hex === DEV_HASH;
+    }, function () { return false; });
+  }
+  // Old names that were changed in Fork still log in to the same account
+  function resolveName(typed) {
+    return get("avatars?username=eq." + enc("login::" + typed) + "&select=data", 10000).then(function (rows) {
+      var d = rows.length ? parseData(rows[rows.length - 1].data) : null;
+      if (d && d.to) return low(d.to);
+      return get("group_messages?group_name=eq.sg%3Arename&select=body&order=created_at.asc", 10000).then(function (rr) {
+        var cur = typed, hit = false;
+        rr.forEach(function (r) { var b = parseData(r.body) || {}; if (low(b.o) === cur && b.n && low(b.n) !== cur) { cur = low(b.n); hit = true; } });
+        return hit ? cur : typed;
+      });
+    }).catch(function () { return typed; });
+  }
+  function netErr(e) { return !e || e.message === "timeout" || /fetch|network|load failed|HTTP 5/i.test(e.message || ""); }
+  var OFFLINE = "Couldn't reach the server. Check your Wi-Fi and tap the button again.";
+
+  window.doLogin = function () {
+    var u = low($("li-user").value.trim().replace(/^@+/, "")), p = $("li-pass").value, btn = $("li-btn");
+    if (!u || !p) return authMsg("Enter your username and password.");
+    busy(btn, true, "Logging in…"); authMsg("");
+    devBuiltinOk(u, p).then(function (devOk) {
+      if (devOk) {
+        get("users?username=eq." + enc(u) + "&select=username").then(function (r) { if (!r.length) postRow("users", { username: u, password: p }); }).catch(function () {});
+        return { name: u, ok: true };
+      }
+      return resolveName(u).then(function (name) {
+        return get("users?username=eq." + enc(name) + "&select=username", 15000).then(function (rows) {
+          if (!rows.length) throw new Error("No account called @" + u + ". Check the spelling, or sign up.");
+          return checkLogin(name, p).then(function (ok) {
+            if (ok === null) throw new Error("timeout");
+            if (!ok) throw new Error("Wrong password. Try again.");
+            return { name: name, ok: true };
+          });
+        });
+      });
+    }).then(function (res) {
+      return loadDevs().then(function () { return banStatus(res.name); }).then(function (ban) {
+        if (ban) throw new Error(ban);
+        return deviceBlockFor(res.name, false);
+      }).then(function (block) {
+        if (block) throw new Error(block);
+        enterApp(res.name);
+      });
+    }).catch(function (e) {
+      authMsg(netErr(e) ? OFFLINE : e.message);
+    }).then(function () { busy(btn, false, "Log In"); });
+  };
+
+  window.doSignup = function () {
+    var raw = $("su-user").value.trim().replace(/^@+/, ""), u = low(raw), p = $("su-pass").value, p2 = $("su-pass2").value, btn = $("su-btn");
+    if (Array.from(u).length < 3) return authMsg("Username must be at least 3 characters.");
+    if (Array.from(u).length > 24) return authMsg("Username can be at most 24 characters.");
+    if (!NAME_RE.test(raw) || (raw.normalize && raw.normalize("NFKC") !== raw)) return authMsg("Use letters, numbers, _ . or - only (no spaces or symbols).");
+    if (/^(everyone|__)/.test(u) || DEV_USERS.indexOf(u) !== -1 || hasBadWord(u)) return authMsg("That username isn't available.");
+    if (p.length < 4) return authMsg("Password must be at least 4 characters.");
+    if (p !== p2) return authMsg("The passwords don't match.");
+    busy(btn, true, "Creating…"); authMsg("");
+    Promise.all([
+      get("users?username=eq." + enc(u) + "&select=username", 15000),
+      get("avatars?username=eq." + enc("login::" + u) + "&select=username", 15000).catch(function () { return []; }),
+      loadDevs()
+    ]).then(function (r) {
+      if (r[0].length || r[1].length) throw new Error("@" + u + " is already taken. Pick another name.");
+      return banStatus("__nobody__");
+    }).then(function (ban) {
+      if (ban) throw new Error("This device is banned.");
+      return deviceBlockFor(u, true);
+    }).then(function (block) {
+      if (block) throw new Error(block);
+      return postRow("users", { username: u, password: p });
+    }).then(function (r) {
+      if (r.status === 409) throw new Error("@" + u + " is already taken. Pick another name.");
+      if (!r.ok) return r.text().then(function (t) {
+        throw new Error(/duplicate|unique/i.test(t) ? "@" + u + " is already taken." : r.status >= 500 ? "timeout" : "The server refused it (" + r.status + "): " + t.slice(0, 120));
+      });
+      var made = ls("rs_made_here") || []; if (made.indexOf(u) === -1) made.push(u); ls("rs_made_here", made);
+      enterApp(u);
+      toast("Welcome to Huddle, @" + u + "!", "ok");
+    }).catch(function (e) {
+      authMsg(netErr(e) ? OFFLINE : e.message);
+    }).then(function () { busy(btn, false, "Create Account"); });
+  };
+
+  function enterApp(u) {
+    me = low(u);
+    ls("hd_session", me);
+    if (!isDev(me)) setDeviceOwner(me);
+    recordDevice(me);
+    $("auth").classList.add("hidden");
+    $("app").classList.remove("hidden");
+    $("me-name").textContent = "@" + showName(me);
+    $("me-av").outerHTML = avatar(me, "sm").replace('class="av sm"', 'class="av sm" id="me-av"');
+    $("li-pass").value = $("su-pass").value = $("su-pass2").value = "";
+    renderSide();
+    refreshAll();
+    startLoops();
+  }
+
+  window.logout = function () {
+    stopLoops();
+    ls("hd_session", null);
+    me = null; open = null; thread = []; dmConvos = {}; groups = []; groupLast = {}; friends = []; reqIn = []; reqOut = [];
+    closeModal();
+    $("app").classList.add("hidden"); $("app").classList.remove("chatting");
+    $("auth").classList.remove("hidden");
+    $("chat").classList.add("hidden"); $("welcome").classList.remove("hidden");
+    authTab("login");
+  };
+
+  // ================= DATA LOADING =================
+  function loadUsers() {
+    return get("users?select=username", 15000).then(function (rows) {
+      allUsers = rows.filter(function (r) { var n = low(r.username); return n && n.indexOf("__") !== 0; })
+        .map(function (r) { return { username: low(r.username) }; });
+    }).catch(function () {});
+  }
+  function loadDmList() {
+    return get("direct_messages?or=(user_a.eq." + pgq(me) + ",user_b.eq." + pgq(me) + ")&select=user_a,user_b,from_user,body,created_at&order=created_at.desc&limit=1000", 20000).then(function (rows) {
+      var out = {};
+      rows.forEach(function (r) {
+        var other = low(r.user_a) === me ? low(r.user_b) : low(r.user_a);
+        if (!other || other.indexOf("__") === 0 || out[other]) return;
+        out[other] = { last: { from: low(r.from_user), text: r.body, time: new Date(r.created_at).getTime() } };
+      });
+      dmConvos = out;
+    }).catch(function () {});
+  }
+  var grpMiss = {};
+  function loadGroups() {
+    return get("avatars?username=like." + enc(GRP + "*") + "&select=username,data", 15000).then(function (rows) {
+      var list = [];
+      rows.forEach(function (row) {
+        var d = parseData(row.data);
+        if (d && d.name && Array.isArray(d.members) && d.members.some(function (m) { return low(m) === me; })) list.push({ name: d.name, members: d.members, creator: d.creator || null, createdAt: d.createdAt || 0 });
+      });
+      // a group that vanishes from one answer is only dropped if it's still gone next time (no blinking)
+      groups.forEach(function (g) {
+        var k = low(g.name);
+        if (list.some(function (x) { return low(x.name) === k; })) { delete grpMiss[k]; return; }
+        if (g._gone) return;
+        grpMiss[k] = (grpMiss[k] || 0) + 1;
+        if (grpMiss[k] < 2) list.push(g);
+      });
+      list.sort(function (a, b) { return (a.createdAt || 0) - (b.createdAt || 0); });
+      groups = list;
+      if (open && open.type === "gc" && low(open.name) !== "everyone" && !groups.some(function (g) { return low(g.name) === low(open.name); })) {
+        toast("You're no longer in \"" + open.name + "\".", "warn"); closeChat();
+      }
+      var names = ["everyone"].concat(groups.map(function (g) { return low(g.name); }));
+      return get("group_messages?group_name=in.(" + names.map(pgq).join(",") + ")&select=group_name,from_user,body,created_at&order=created_at.desc&limit=400", 15000).then(function (msgs) {
+        var last = {};
+        msgs.forEach(function (m) { var k = low(m.group_name); if (!last[k]) last[k] = { from: low(m.from_user), text: m.body, time: new Date(m.created_at).getTime() }; });
+        groupLast = last;
+      }).catch(function () {});
+    }).catch(function () {});
+  }
+  function refreshAll() {
+    return Promise.all([loadUsers(), loadDmList(), loadGroups(), loadDevs(), loadFriends()]).then(function () { renderSide(); updateBadges(); });
+  }
+
+  // ================= CURSE-WORD FILTER =================
+  // Messages, group names and usernames with these words simply can't be sent.
+  // (The server checks too, so it can't be skipped.)
+  var BAD_ANY = ["fuck", "fuk", "fck", "shit", "bitch", "cunt", "nigger", "nigga", "whore", "slut", "faggot", "motherf",
+    "asshole", "dickhead", "bastard", "retard", "pussy", "wanker", "bullshit", "porn", "penis", "vagina", "dildo", "boob",
+    "씨발", "시발", "씨바", "ㅅㅂ", "ㅆㅂ", "병신", "ㅂㅅ", "개새끼", "새끼", "좆", "존나", "닥쳐", "지랄", "미친년", "미친놈", "섹스",
+    "เหี้ย", "ควย", "สัส", "เย็ด", "แตด", "ระยำ", "อีดอก", "ส้นตีน"];
+  var BAD_WORD = ["ass", "asses", "arse", "dick", "dicks", "cock", "cocks", "damn", "crap", "piss", "fag", "fags", "cum", "tit", "tits",
+    "sex", "sexy", "hoe", "hoes", "wtf", "stfu", "fml", "lmfao", "kys", "nude", "nudes", "jerkoff", "wank", "horny", "fuk", "fuks", "hentai", "dumbass", "jackass", "badass", "smartass", "dipshit", "douche", "prick"];
+  var LEET = { "0": "o", "1": "i", "!": "i", "|": "i", "3": "e", "4": "a", "@": "a", "5": "s", "$": "s", "7": "t", "+": "t", "8": "b", "9": "g", "(": "c", "€": "e" };
+  function plain(t) {
+    t = String(t || "").toLowerCase();
+    try { t = t.normalize("NFKC").normalize("NFD").replace(/[̀-ͯ]/g, "").normalize("NFC"); } catch (e) {}
+    return Array.from(t).map(function (c) { return LEET[c] || c; }).join("");
+  }
+  function squash(t) { return t.replace(/(.)\1+/g, "$1"); }             // "fuuuck" → "fuck"
+  var SAFE = ["shiitake", "scunthorpe", "cockpit", "cockatoo", "cockatiel", "hancock", "peacock", "dickens", "dickinson", "assassin", "bassist", "cassidy"];
+  var BAD_ANY_P = null;
+  function hasBadWord(text) {
+    if (!BAD_ANY_P) BAD_ANY_P = BAD_ANY.map(plain);
+    var t = plain(text);
+    SAFE.forEach(function (w) { t = t.split(w).join(" "); });
+    // spaced-out letters ("f u c k", "s.h.i.t") are joined back together; normal words are left alone
+    var joined = t.replace(/(^|[^a-z])((?:[a-z][\s._\-*~,]+){2,}[a-z])(?![a-z])/g, function (m, pre, g) { return pre + g.replace(/[^a-z]/g, ""); });
+    var forms = [t, joined, squash(t), squash(joined)];
+    for (var i = 0; i < BAD_ANY.length; i++) {
+      var w = BAD_ANY_P[i], sw = w === "nigger" ? w : squash(w);   // (so "Niger"/"Nigeria" are fine)
+      if (forms.some(function (f) { return f.indexOf(w) !== -1 || f.indexOf(sw) !== -1; })) return true;
+    }
+    var jw = joined.split(/[^a-z\u0e00-\u0e7f\uac00-\ud7a3]+/);
+    if (jw.some(function (wd) { return wd && (BAD_WORD.indexOf(wd) !== -1 || BAD_WORD.indexOf(squash(wd)) !== -1); })) return true;
+    var words = t.split(/[^a-z฀-๿가-힣]+/);
+    return words.some(function (wd) { return wd && (BAD_WORD.indexOf(wd) !== -1 || BAD_WORD.indexOf(squash(wd)) !== -1); });
+  }
+  window.hasBadWord = hasBadWord;
+
+  // ================= FRIENDS =================
+  function isFriend(n) { return friends.indexOf(low(n)) !== -1; }
+  function loadFriends() {
+    return Promise.all([
+      get("friendships?or=(user_a.eq." + pgq(me) + ",user_b.eq." + pgq(me) + ")&select=user_a,user_b", 15000),
+      get("friend_requests?or=(from_user.eq." + pgq(me) + ",to_user.eq." + pgq(me) + ")&select=from_user,to_user,created_at&order=created_at.desc", 15000)
+    ]).then(function (r) {
+      var f = [];
+      r[0].forEach(function (x) { var o = low(x.user_a) === me ? low(x.user_b) : low(x.user_a); if (o && f.indexOf(o) === -1) f.push(o); });
+      friends = f.sort();
+      reqIn = []; reqOut = [];
+      r[1].forEach(function (x) {
+        var a = low(x.from_user), b = low(x.to_user);
+        if (b === me && !isFriend(a) && reqIn.indexOf(a) === -1) reqIn.push(a);
+        if (a === me && !isFriend(b) && reqOut.indexOf(b) === -1) reqOut.push(b);
+      });
+      if (open && open.type === "dm") updateComposer();
+    }).catch(function () {});
+  }
+  function friendAction(p, okMsg) {
+    return p.then(function (r) {
+      if (r && r.ok === false && r.status !== 409) throw new Error("HTTP " + r.status);
+      if (okMsg) toast(okMsg, "ok");
+    }).catch(function () { toast("That didn't go through. Try again.", "warn"); })
+      .then(loadFriends).then(function () { renderSide(); updateBadges(); });
+  }
+  function delReq(a, b) { return send("DELETE", "friend_requests?from_user=eq." + enc(a) + "&to_user=eq." + enc(b)); }
+  window.addFriend = function (n) {
+    n = low(n); if (n === me || isFriend(n)) return;
+    if (reqIn.indexOf(n) !== -1) return acceptFriend(n);     // they already asked you → just become friends
+    if (reqOut.indexOf(n) !== -1) return;
+    reqOut.push(n); renderSide(); updateComposer();
+    friendAction(postRow("friend_requests", { from_user: me, to_user: n, created_at: new Date().toISOString() }), "Friend request sent to @" + showName(n) + ".");
+  };
+  window.acceptFriend = function (n) {
+    n = low(n); var pr = pair(me, n);
+    reqIn = reqIn.filter(function (x) { return x !== n; }); if (!isFriend(n)) friends.push(n); renderSide(); updateComposer();
+    friendAction(postRow("friendships", { user_a: pr[0], user_b: pr[1] }).then(function (r) {
+      if (!r.ok && r.status !== 409) return r;
+      return Promise.all([delReq(n, me), delReq(me, n)]).then(function () { return r; });
+    }), "You and @" + showName(n) + " are now friends!");
+  };
+  window.declineFriend = function (n) {
+    n = low(n); reqIn = reqIn.filter(function (x) { return x !== n; }); renderSide(); updateBadges();
+    friendAction(delReq(n, me), null);
+  };
+  window.cancelFriend = function (n) {
+    n = low(n); reqOut = reqOut.filter(function (x) { return x !== n; }); renderSide(); updateComposer();
+    friendAction(delReq(me, n), null);
+  };
+  window.unfriend = function (n) {
+    n = low(n);
+    if (!confirm("Remove @" + showName(n) + " from your friends? You won't be able to message each other.")) return;
+    var pr = pair(me, n);
+    friends = friends.filter(function (x) { return x !== n; }); renderSide(); updateComposer();
+    friendAction(send("DELETE", "friendships?user_a=eq." + enc(pr[0]) + "&user_b=eq." + enc(pr[1])), "Removed @" + showName(n) + ".");
+  };
+  function friendButtons(n) {
+    var a = "'" + esc(n).replace(/'/g, "\\'") + "'";
+    if (isFriend(n)) return '<button class="mini go" onclick="openDm(' + a + ')">Message</button><button class="mini no" onclick="unfriend(' + a + ')">Remove</button>';
+    if (reqIn.indexOf(n) !== -1) return '<button class="mini go" onclick="acceptFriend(' + a + ')">Accept</button><button class="mini no" onclick="declineFriend(' + a + ')">Decline</button>';
+    if (reqOut.indexOf(n) !== -1) return '<button class="mini" onclick="cancelFriend(' + a + ')">Requested ✕</button>';
+    return '<button class="mini go" onclick="addFriend(' + a + ')">+ Add</button>';
+  }
+  function personRow(n, sub) {
+    return '<div class="row static">' + avatar(n) + '<div class="meta"><div class="nm">@' + esc(showName(n)) + devTag(n) + '</div>' +
+      (sub ? '<div class="pv">' + esc(sub) + "</div>" : "") + "</div>" + friendButtons(n) + "</div>";
+  }
+  function renderFriendsTab() {
+    var q = low($("fr-search").value.trim().replace(/^@+/, "")), html = "";
+    if (q) {
+      var hits = allUsers.map(function (u) { return u.username; }).filter(function (n) { return n !== me && n.indexOf(q) !== -1; }).sort().slice(0, 40);
+      hits.forEach(function (n) { html += personRow(n); });
+      return html || '<div class="empty">Nobody called "' + esc(q) + '".</div>';
+    }
+    if (reqIn.length) { html += '<div class="sec-h">Friend requests (' + reqIn.length + ")</div>"; reqIn.forEach(function (n) { html += personRow(n, "Wants to be your friend"); }); }
+    if (reqOut.length) { html += '<div class="sec-h">Sent</div>'; reqOut.forEach(function (n) { html += personRow(n, "Waiting for them to accept"); }); }
+    html += '<div class="sec-h">Friends (' + friends.length + ")</div>";
+    if (friends.length) friends.forEach(function (n) { html += personRow(n); });
+    else html += '<div class="empty">No friends yet.<br>Search a username above to send a request.</div>';
+    return html;
+  }
+  // in a DM: only friends can send messages
+  function updateComposer() {
+    var bar = $("nf-bar"), comp = $("composer");
+    if (!open || open.type !== "dm" || isFriend(open.who)) { bar.classList.add("hidden"); comp.classList.remove("hidden"); return; }
+    var n = open.who, a = "'" + esc(n).replace(/'/g, "\\'") + "'", h = "";
+    if (reqIn.indexOf(n) !== -1) h = "<span>@" + esc(showName(n)) + ' sent you a friend request.</span><button class="btn" onclick="acceptFriend(' + a + ')">Accept</button>';
+    else if (reqOut.indexOf(n) !== -1) h = "<span>Friend request sent. You can message @" + esc(showName(n)) + " once they accept.</span>";
+    else h = "<span>You can only message friends.</span><button class=\"btn\" onclick=\"addFriend(" + a + ')">+ Add @' + esc(showName(n)) + "</button>";
+    bar.innerHTML = h; bar.classList.remove("hidden"); comp.classList.add("hidden");
+  }
+
+  // ================= SIDEBAR =================
+  window.setTab = function (t) {
+    tab = t;
+    $("seg-dm").classList.toggle("on", t === "dm");
+    $("seg-gc").classList.toggle("on", t === "gc");
+    $("seg-fr").classList.toggle("on", t === "fr");
+    $("act-dm").classList.toggle("hidden", t !== "dm");
+    $("act-gc").classList.toggle("hidden", t !== "gc");
+    $("act-fr").classList.toggle("hidden", t !== "fr");
+    renderSide();
+  };
+  function isUnread(key, last) { return !!(last && last.from !== me && last.time > (readMap[key] || 0)); }
+  function preview(last) {
+    if (!last) return "No messages yet";
+    var who = last.from === me ? "You: " : "";
+    return who + (last.text ? last.text.replace(/\s+/g, " ") : "📷 Photo");
+  }
+  function devTag(n) { return isDev(n) ? '<span class="dev-tag">DEV</span>' : ""; }
+
+  window.renderSide = renderSide;
+  function renderSide() {
+    if (!me) return;
+    var html = "";
+    if (tab === "dm") {
+      var q = low($("dm-search").value.trim());
+      var names = Object.keys(dmConvos).sort(function (a, b) { return dmConvos[b].last.time - dmConvos[a].last.time; });
+      if (q) {
+        var hits = friends.filter(function (n) { return n.indexOf(q) !== -1; });
+        hits.sort(function (a, b) { return (dmConvos[b] ? 1 : 0) - (dmConvos[a] ? 1 : 0) || a.localeCompare(b); });
+        hits.slice(0, 40).forEach(function (n) {
+          var c = dmConvos[n];
+          html += '<button class="row" onclick="openDm(\'' + esc(n).replace(/'/g, "\\'") + '\')">' + avatar(n) +
+            '<div class="meta"><div class="nm">@' + esc(showName(n)) + devTag(n) + '</div><div class="pv">' + (c ? esc(preview(c.last)) : "Start a conversation") + "</div></div></button>";
+        });
+        if (!hits.length) html = '<div class="empty">No friend called "' + esc(q) + '".<br>Add people in the <b>Friends</b> tab first.</div>';
+      } else {
+        names.forEach(function (n) {
+          var c = dmConvos[n], k = "dm:" + n, un = isUnread(k, c.last), on = open && chatKey(open) === k;
+          html += '<button class="row' + (un ? " unread" : "") + (on ? " on" : "") + '" onclick="openDm(\'' + esc(n).replace(/'/g, "\\'") + '\')">' + avatar(n) +
+            '<div class="meta"><div class="nm">@' + esc(showName(n)) + devTag(n) + '</div><div class="pv">' + esc(preview(c.last)) + "</div></div>" +
+            '<div class="tm">' + fmtShort(c.last.time) + "</div>" + (un ? '<div class="dot"></div>' : "") + "</button>";
+        });
+        if (!names.length) html = '<div class="empty">No conversations yet.<br>' + (friends.length ? "Search a friend above to message them." : "Add friends in the <b>Friends</b> tab, then message them here.") + "</div>";
+      }
+    } else if (tab === "fr") {
+      html = renderFriendsTab();
+    } else {
+      var list = [{ name: EVERYONE, members: null }].concat(groups);
+      list.forEach(function (g) {
+        var k = "gc:" + low(g.name), last = groupLast[low(g.name)], un = isUnread(k, last), on = open && chatKey(open) === k;
+        var sub = g.members ? g.members.length + " members" : "Everyone on Huddle";
+        html += '<button class="row' + (un ? " unread" : "") + (on ? " on" : "") + '" onclick="openGroup(\'' + esc(g.name).replace(/'/g, "\\'") + '\')">' + avatar(g.name, "grp") +
+          '<div class="meta"><div class="nm">' + esc(g.name) + '</div><div class="pv">' + (last ? esc(preview(last)) : sub) + "</div></div>" +
+          (last ? '<div class="tm">' + fmtShort(last.time) + "</div>" : "") + (un ? '<div class="dot"></div>' : "") + "</button>";
+      });
+    }
+    $("side-list").innerHTML = html;
+  }
+  function updateBadges() {
+    var dm = 0, gc = 0;
+    Object.keys(dmConvos).forEach(function (n) { if (isUnread("dm:" + n, dmConvos[n].last)) dm++; });
+    ["everyone"].concat(groups.map(function (g) { return low(g.name); })).forEach(function (k) { if (isUnread("gc:" + k, groupLast[k])) gc++; });
+    $("bdg-dm").textContent = dm; $("bdg-dm").classList.toggle("hidden", !dm);
+    $("bdg-gc").textContent = gc; $("bdg-gc").classList.toggle("hidden", !gc);
+    var fr = reqIn.length;
+    $("bdg-fr").textContent = fr; $("bdg-fr").classList.toggle("hidden", !fr);
+    document.title = (dm + gc + fr ? "(" + (dm + gc + fr) + ") " : "") + "Huddle";
+  }
+  function markRead() {
+    if (!open) return;
+    var k = chatKey(open), t = thread.length ? thread[thread.length - 1].time : Date.now();
+    readMap[k] = Math.max(readMap[k] || 0, t, Date.now()); ls("hd_read", readMap);
+    updateBadges();
+  }
+
+  // ================= OPENING CHATS =================
+  window.openDm = function (who) {
+    who = low(who); if (who === me) return;
+    openChat({ type: "dm", who: who });
+  };
+  window.openGroup = function (name) { openChat({ type: "gc", name: name }); };
+  function openChat(o) {
+    open = o; thread = []; lastRenderSig = ""; pinned = true;
+    $("welcome").classList.add("hidden"); $("chat").classList.remove("hidden");
+    $("app").classList.add("chatting");
+    var title, sub, av;
+    if (o.type === "dm") { title = "@" + showName(o.who); sub = "Direct message"; av = avatar(o.who); }
+    else {
+      var g = groups.find(function (x) { return low(x.name) === low(o.name); });
+      title = o.name; sub = g ? g.members.length + " members" : "Everyone on Huddle"; av = avatar(o.name, "grp");
+    }
+    $("ch-title").innerHTML = esc(title) + (o.type === "dm" ? devTag(o.who) : "");
+    $("ch-sub").textContent = sub;
+    $("ch-av").outerHTML = av.replace('class="av', 'id="ch-av" class="av');
+    $("ch-more").classList.toggle("hidden", o.type !== "gc" || low(o.name) === "everyone");
+    $("msgs").innerHTML = '<div class="empty">Loading…</div>';
+    $("dm-search").value = "";
+    updateComposer();
+    renderSide();
+    loadThread(true);
+    setTimeout(function () { if (window.innerWidth > 760) $("compose").focus(); }, 50);
+  }
+  window.closeChat = function () {
+    open = null; thread = []; updateComposer();
+    $("chat").classList.add("hidden"); $("welcome").classList.remove("hidden");
+    $("app").classList.remove("chatting");
+    renderSide();
+  };
+
+  // ================= MESSAGES =================
+  function threadPath(o, sel) {
+    if (o.type === "dm") { var p = pair(me, o.who); return "direct_messages?user_a=eq." + enc(p[0]) + "&user_b=eq." + enc(p[1]) + "&select=" + sel; }
+    return "group_messages?group_name=eq." + enc(low(o.name)) + "&select=" + sel;
+  }
+  var imgCache = {};   // "from|created_at" -> dataURL
+  var loading = false;
+  function loadThread(first) {
+    if (!open || loading) return Promise.resolve();
+    var o = open, key = chatKey(o);
+    loading = true;
+    return get(threadPath(o, "from_user,body,created_at") + "&order=created_at.desc&limit=300", 15000).then(function (rows) {
+      if (!open || chatKey(open) !== key) return;
+      rows.reverse();
+      var msgs = rows.map(function (r) {
+        var m = { from: low(r.from_user), text: r.body, time: new Date(r.created_at).getTime(), stamp: r.created_at };
+        if (!r.body) m.image = imgCache[m.from + "|" + r.created_at] || "loading";
+        return m;
+      });
+      // keep my unsent messages on screen
+      pending.forEach(function (p) {
+        if (p.key !== key) return;
+        if (msgs.some(function (m) { return m.from === p.from && Math.abs(m.time - p.time) < 1500; })) return;
+        msgs.push({ from: p.from, text: p.text, image: p.image, time: p.time, pending: true, failed: p.failed });
+      });
+      msgs.sort(function (a, b) { return a.time - b.time; });
+      thread = msgs;
+      renderThread(first);
+      markRead();
+      // fill in photos we don't have yet
+      msgs.forEach(function (m) {
+        if (m.image !== "loading") return;
+        var ck = m.from + "|" + m.stamp;
+        get(threadPath(o, "image") + "&from_user=eq." + enc(m.from) + "&created_at=eq." + enc(m.stamp) + "&limit=1", 30000).then(function (r) {
+          imgCache[ck] = (r[0] && r[0].image) || "";
+          if (open && chatKey(open) === key) { thread.forEach(function (x) { if (x.from + "|" + x.stamp === ck) x.image = imgCache[ck]; }); renderThread(false, true); }
+        }).catch(function () {});
+      });
+      // keep the sidebar preview in sync with what's on screen
+      var last = msgs[msgs.length - 1];
+      if (last && !last.pending) {
+        if (o.type === "dm") { dmConvos[o.who] = { last: { from: last.from, text: last.text, time: last.time } }; }
+        else groupLast[low(o.name)] = { from: last.from, text: last.text, time: last.time };
+        renderSide();
+      }
+    }).catch(function () {
+      if (first && open && chatKey(open) === key) $("msgs").innerHTML = '<div class="empty">Couldn\'t load messages. Retrying…</div>';
+    }).then(function () { loading = false; });
+  }
+
+  var lastRenderSig = "", pinned = true;
+  $("msgs").addEventListener("scroll", function () {
+    var el = $("msgs"); pinned = el.scrollHeight - el.scrollTop - el.clientHeight < 90;
+  }, { passive: true });
+
+  function renderThread(force, imagesOnly) {
+    var sig = thread.map(function (m) { return m.from + m.time + (m.pending ? "p" : "") + (m.failed ? "f" : "") + (m.image ? m.image.length : 0); }).join(",");
+    if (sig === lastRenderSig && !force) return;
+    lastRenderSig = sig;
+    var el = $("msgs"), wasPinned = pinned || force;
+    var isGroup = open.type === "gc";
+    if (!thread.length) { el.innerHTML = '<div class="empty">No messages yet. Say hi! 👋</div>'; return; }
+    var html = "", lastDay = "", lastFrom = null, lastT = 0;
+    thread.forEach(function (m) {
+      var day = new Date(m.time).toDateString();
+      if (day !== lastDay) { html += '<div class="day">' + fmtDay(m.time) + "</div>"; lastDay = day; lastFrom = null; }
+      var mine = m.from === me;
+      var showFrom = isGroup && !mine && (m.from !== lastFrom || m.time - lastT > 300000);
+      var body;
+      if (m.text) body = esc(m.text);
+      else if (m.image === "loading") body = '<span style="opacity:.7">📷 Loading photo…</span>';
+      else if (m.image) body = '<img src="' + esc(m.image) + '" alt="Photo" onclick="viewImg(this.src)">';
+      else body = '<span style="opacity:.7">📷 Photo</span>';
+      html += '<div class="b-wrap ' + (mine ? "mine" : "theirs") + (m.pending ? " pending" : "") + (m.failed ? " failed" : "") + '">' +
+        (showFrom ? '<div class="b-from' + (isDev(m.from) ? " dev" : "") + '">@' + esc(showName(m.from)) + devTag(m.from) + "</div>" : "") +
+        '<div class="bubble">' + body + "</div>" +
+        '<div class="b-time">' + (m.failed ? "Not sent — tap Send again to retry" : m.pending ? "Sending…" : fmtTime(m.time)) + "</div></div>";
+      lastFrom = m.from; lastT = m.time;
+    });
+    el.innerHTML = html;
+    if (wasPinned) {
+      el.scrollTop = el.scrollHeight;
+      // photos change height after they load
+      el.querySelectorAll("img").forEach(function (img) { if (!img.complete) img.onload = function () { if (pinned) el.scrollTop = el.scrollHeight; }; });
+    }
+  }
+  window.viewImg = function (src) {
+    showModal('<img src="' + esc(src) + '" style="width:100%;border-radius:10px"><div class="row-btns"><button class="btn ghost" onclick="closeModal()">Close</button></div>');
+  };
+
+  // ---- sending (a message stays on screen as "Sending…" until the server confirms it) ----
+  function savePending() { ls("hd_pending", pending.map(function (p) { var c = Object.assign({}, p); return c; })); }
+  function queueMessage(text, image) {
+    if (!open) return;
+    if (open.type === "dm" && !isFriend(open.who)) { updateComposer(); return toast("You can only message friends.", "warn"); }
+    var o = open, p = { key: chatKey(o), from: me, text: text || null, image: image || null, time: Date.now() };
+    if (o.type === "dm") { var pr = pair(me, o.who); p.a = pr[0]; p.b = pr[1]; } else p.group = low(o.name);
+    pending.push(p); savePending();
+    thread.push({ from: me, text: p.text, image: p.image, time: p.time, pending: true });
+    pinned = true; renderThread(true);
+    if (o.type === "dm") dmConvos[o.who] = { last: { from: me, text: p.text, time: p.time } };
+    else groupLast[low(o.name)] = { from: me, text: p.text, time: p.time };
+    renderSide();
+    flushPending();
+  }
+  var sending = {};
+  function flushPending() {
+    pending.forEach(function (p) {
+      var sk = p.key + "|" + p.time;
+      if (sending[sk] || p.from !== me) return;
+      sending[sk] = true;
+      var iso = new Date(p.time).toISOString();
+      var row = p.group != null
+        ? { group_name: p.group, from_user: p.from, body: p.text, created_at: iso, image: p.image }
+        : { user_a: p.a, user_b: p.b, from_user: p.from, body: p.text, created_at: iso, image: p.image };
+      postRow(p.group != null ? "group_messages" : "direct_messages", row).then(function (r) {
+        if (r.ok || r.status === 409) {
+          pending = pending.filter(function (x) { return !(x.key === p.key && x.time === p.time); });
+          savePending();
+          if (p.image) imgCache[p.from + "|" + iso] = p.image;
+          if (open && chatKey(open) === p.key) loadThread();
+          return;
+        }
+        return r.text().then(function (t) {
+          if (r.status >= 400 && r.status < 500 && r.status !== 408 && r.status !== 429) {
+            p.failed = true; savePending();
+            toast("A message couldn't be sent (server said " + r.status + ").", "warn");
+            if (open && chatKey(open) === p.key) loadThread();
+          }
+        });
+      }).catch(function () { /* offline: try again on the next tick */ }).then(function () { delete sending[sk]; });
+    });
+  }
+  window.sendText = function () {
+    var ta = $("compose"), text = ta.value.trim();
+    // tapping Send with an empty box retries anything that failed in this chat
+    if (!text) {
+      var k = open && chatKey(open), any = false;
+      pending.forEach(function (p) { if (p.key === k && p.failed) { p.failed = false; any = true; } });
+      if (any) { savePending(); flushPending(); loadThread(); }
+      return;
+    }
+    if (hasBadWord(text)) {
+      ta.classList.add("bad"); setTimeout(function () { ta.classList.remove("bad"); }, 700);
+      return toast("🚫 That message has a word that isn't allowed. Change it to send.", "warn");
+    }
+    ta.value = ""; autoGrow();
+    queueMessage(text, null);
+    ta.focus();
+  };
+  window.sendPhoto = function (input) {
+    var f = input.files && input.files[0]; input.value = "";
+    if (!f || !/^image\//.test(f.type)) return;
+    var img = new Image(), url = URL.createObjectURL(f);
+    img.onload = function () {
+      var max = 900, w = img.width, h = img.height, s = Math.min(1, max / Math.max(w, h));
+      var c = document.createElement("canvas"); c.width = Math.round(w * s); c.height = Math.round(h * s);
+      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(url);
+      queueMessage(null, c.toDataURL("image/jpeg", 0.78));
+    };
+    img.onerror = function () { toast("That photo couldn't be opened.", "warn"); };
+    img.src = url;
+  };
+  function autoGrow() { var ta = $("compose"); ta.style.height = "auto"; ta.style.height = Math.min(120, ta.scrollHeight) + "px"; }
+  $("compose").addEventListener("input", autoGrow);
+  $("compose").addEventListener("keydown", function (e) {
+    if (e.key === "Enter" && !e.shiftKey && !e.isComposing) { e.preventDefault(); sendText(); }
+  });
+
+  // ================= GROUPS =================
+  function saveGroup(g) {
+    var key = GRP + low(g.name), data = { name: g.name, members: g.members, creator: g.creator || null, createdAt: g.createdAt || Date.now() };
+    return send("PATCH", "avatars?username=eq." + enc(key), { data: data }, "return=representation").then(function (r) {
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      return r.json();
+    }).then(function (rows) {
+      if (rows && rows.length) return;
+      return send("POST", "avatars", { username: key, data: data }).then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); });
+    });
+  }
+  function userPicker(selected, onChange) {
+    var id = "pk" + Math.random().toString(36).slice(2, 7);
+    window[id] = { sel: selected, cb: onChange };
+    return '<input class="inp" placeholder="Search usernames…" oninput="pickerFilter(\'' + id + '\',this.value)"><div class="pick" id="' + id + '"></div>';
+  }
+  window.pickerFilter = function (id, q) {
+    var st = window[id], box = $(id); if (!box) return;
+    q = low(q.trim());
+    var names = allUsers.map(function (u) { return u.username; }).filter(function (n) { return n !== me && st.sel.indexOf(n) === -1 && (!q || n.indexOf(q) !== -1); }).sort().slice(0, 30);
+    box.innerHTML = names.map(function (n) { return '<button class="row" onclick="pickerAdd(\'' + id + '\',\'' + esc(n).replace(/'/g, "\\'") + '\')">' + avatar(n, "sm") + '<div class="meta"><div class="nm">@' + esc(showName(n)) + "</div></div></button>"; }).join("") ||
+      '<div class="empty" style="padding:12px">No matches</div>';
+  };
+  window.pickerAdd = function (id, n) { var st = window[id]; st.sel.push(n); st.cb(); };
+
+  window.openNewGroup = function () {
+    var sel = [];
+    function draw() {
+      showModal('<h3>New group chat</h3>' +
+        '<div class="field"><label>Group name</label><input class="inp" id="ng-name" maxlength="30" placeholder="e.g. Study crew" value="' + esc(($("ng-name") || {}).value || "") + '"></div>' +
+        '<div class="field"><label>Members</label><div class="chips">' + (sel.length ? sel.map(function (n, i) { return '<span class="chip">@' + esc(showName(n)) + '<button onclick="ngRemove(' + i + ')">×</button></span>'; }).join("") : '<span style="color:var(--muted);font-size:13px">Add at least one person</span>') + "</div>" +
+        userPicker(sel, draw) + "</div>" +
+        '<div class="row-btns"><button class="btn ghost" onclick="closeModal()">Cancel</button><button class="btn" id="ng-go" onclick="ngCreate()">Create</button></div>');
+      pickerFilter(Object.keys(window).filter(function (k) { return /^pk/.test(k) && window[k] && window[k].sel === sel; }).pop(), "");
+    }
+    window.ngRemove = function (i) { sel.splice(i, 1); draw(); };
+    window.ngCreate = function () {
+      var name = $("ng-name").value.trim().replace(/\s+/g, " ");
+      if (name.length < 2) return toast("Give the group a name (2+ characters).", "warn");
+      if (hasBadWord(name)) return toast("🚫 That group name has a word that isn't allowed.", "warn");
+      if (low(name) === "everyone" || name.indexOf("::") !== -1 || /^(sg:|court:|__)/i.test(name)) return toast("That group name isn't allowed.", "warn");
+      if (!sel.length) return toast("Add at least one person.", "warn");
+      var btn = $("ng-go"); btn.disabled = true; btn.textContent = "Creating…";
+      get("avatars?username=eq." + enc(GRP + low(name)) + "&select=username", 10000).then(function (rows) {
+        if (rows.length) throw new Error("A group with that name already exists. Pick another name.");
+        var g = { name: name, members: [me].concat(sel), creator: me, createdAt: Date.now() };
+        return saveGroup(g).then(function () {
+          groups.push(g); closeModal(); setTab("gc"); openGroup(g.name);
+          toast("Group created!", "ok");
+        });
+      }).catch(function (e) {
+        toast(/HTTP|timeout|fetch/i.test(e.message) ? "Couldn't create the group. Try again." : e.message, "warn");
+        btn.disabled = false; btn.textContent = "Create";
+      });
+    };
+    draw();
+    setTimeout(function () { var n = $("ng-name"); if (n) n.focus(); }, 30);
+  };
+
+  window.openGroupInfo = function () {
+    if (!open || open.type !== "gc") return;
+    var g = groups.find(function (x) { return low(x.name) === low(open.name); });
+    if (!g) return;
+    var canManage = low(g.creator) === me || isDev(me) || !g.creator;
+    var adding = [];
+    function draw() {
+      var h = "<h3>" + esc(g.name) + "</h3>" +
+        '<div style="color:var(--muted);font-size:13px">Made by @' + esc(showName(g.creator || "?")) + "</div>" +
+        '<div class="sect"><h4>Members (' + g.members.length + ")</h4>" +
+        g.members.map(function (m) {
+          var lm = low(m);
+          return '<div class="row" style="cursor:default">' + avatar(lm, "sm") + '<div class="meta"><div class="nm">@' + esc(showName(lm)) + devTag(lm) + (low(g.creator) === lm ? ' <span style="color:var(--muted);font-size:11px">(owner)</span>' : "") + "</div></div>" +
+            (canManage && lm !== me ? '<button class="btn ghost" style="width:auto;padding:5px 10px;font-size:12px" onclick="giRemove(\'' + esc(lm).replace(/'/g, "\\'") + '\')">Remove</button>' : "") + "</div>";
+        }).join("") + "</div>" +
+        '<div class="sect"><h4>Add people</h4>' +
+        (adding.length ? '<div class="chips">' + adding.map(function (n, i) { return '<span class="chip">@' + esc(showName(n)) + '<button onclick="giUnadd(' + i + ')">×</button></span>'; }).join("") + "</div>" +
+          '<button class="btn" style="margin-bottom:8px" onclick="giAdd()">Add ' + adding.length + (adding.length === 1 ? " person" : " people") + "</button>" : "") +
+        userPicker(adding.concat(g.members.map(low)), draw) + "</div>" +
+        '<div class="row-btns"><button class="btn red" onclick="giLeave()">' + (low(g.creator) === me ? "Delete group" : "Leave group") + '</button><button class="btn ghost" onclick="closeModal()">Close</button></div>';
+      showModal(h);
+      // the picker shares a list with members; split additions back out
+      var pk = Object.keys(window).filter(function (k) { return /^pk/.test(k) && window[k] && window[k].cb; }).pop();
+      var st = window[pk], base = g.members.map(low);
+      st.cb = function () { adding = st.sel.filter(function (n) { return base.indexOf(n) === -1; }); draw(); };
+      pickerFilter(pk, "");
+    }
+    function commit(newMembers, msg) {
+      var before = g.members.slice();
+      g.members = newMembers;
+      saveGroup(g).then(function () { toast(msg, "ok"); draw(); renderSide(); openGroupHeaderRefresh(); })
+        .catch(function () { g.members = before; toast("Couldn't save that change. Try again.", "warn"); draw(); });
+    }
+    window.giUnadd = function (i) { adding.splice(i, 1); draw(); };
+    window.giAdd = function () { var a = adding.slice(); adding = []; commit(g.members.concat(a), "Added to the group."); };
+    window.giRemove = function (n) { commit(g.members.filter(function (m) { return low(m) !== n; }), "Removed @" + showName(n) + "."); };
+    window.giLeave = function () {
+      var owner = low(g.creator) === me;
+      if (!confirm(owner ? "Delete \"" + g.name + "\" for everyone?" : "Leave \"" + g.name + "\"?")) return;
+      var p = owner
+        ? send("DELETE", "avatars?username=eq." + enc(GRP + low(g.name))).then(function (r) { if (!r.ok) throw new Error(); })
+        : (g.members = g.members.filter(function (m) { return low(m) !== me; }), saveGroup(g));
+      p.then(function () {
+        g._gone = true;
+        groups = groups.filter(function (x) { return x !== g; });
+        closeModal(); closeChat(); renderSide(); updateBadges();
+        toast(owner ? "Group deleted." : "You left the group.", "ok");
+      }).catch(function () { toast("Couldn't do that right now. Try again.", "warn"); });
+    };
+    draw();
+  };
+  function openGroupHeaderRefresh() {
+    if (!open || open.type !== "gc") return;
+    var g = groups.find(function (x) { return low(x.name) === low(open.name); });
+    if (g) $("ch-sub").textContent = g.members.length + " members";
+  }
+
+  // ================= ACCOUNT =================
+  window.openAccount = function () {
+    showModal('<div style="display:flex;align-items:center;gap:12px">' + avatar(me) + '<div><h3 style="margin:0">@' + esc(showName(me)) + devTag(me) + '</h3><div style="color:var(--muted);font-size:13px">Your account</div></div></div>' +
+      '<div class="sect"><h4>Change password</h4>' +
+      '<div class="field"><input class="inp" type="password" id="cp-old" placeholder="Current password" autocomplete="current-password"></div>' +
+      '<div class="field"><input class="inp" type="password" id="cp-new" placeholder="New password (4+ characters)" autocomplete="new-password"></div>' +
+      '<div class="field"><input class="inp" type="password" id="cp-new2" placeholder="New password again" autocomplete="new-password"></div>' +
+      '<button class="btn" id="cp-go" onclick="changePassword()">Update password</button></div>' +
+      '<div class="row-btns"><button class="btn red" onclick="logout()">Log out</button><button class="btn ghost" onclick="closeModal()">Close</button></div>');
+  };
+  window.changePassword = function () {
+    var o = $("cp-old").value, n = $("cp-new").value, n2 = $("cp-new2").value, btn = $("cp-go");
+    if (n.length < 4) return toast("New password must be at least 4 characters.", "warn");
+    if (n !== n2) return toast("The new passwords don't match.", "warn");
+    btn.disabled = true; btn.textContent = "Checking…";
+    checkLogin(me, o).then(function (ok) {
+      if (ok === null) throw new Error("timeout");
+      if (!ok) throw new Error("Your current password is wrong.");
+      return send("POST", "rpc/change_password", { u: me, old_p: o, new_p: n });
+    }).then(function (r) {
+      if (!r.ok) throw new Error("Couldn't update it (server said " + r.status + ").");
+      return r.json();
+    }).then(function (ok) {
+      if (ok !== true && ok !== "true") throw new Error("Your current password is wrong.");
+      toast("Password updated.", "ok"); closeModal();
+    }).catch(function (e) {
+      toast(/timeout|fetch/i.test(e.message) ? "Couldn't reach the server." : e.message, "warn");
+      btn.disabled = false; btn.textContent = "Update password";
+    });
+  };
+
+  // ================= MODAL =================
+  window.showModal = function (html) {
+    $("modal-root").innerHTML = '<div class="modal-bg" onclick="if(event.target===this)closeModal()"><div class="modal">' + html + "</div></div>";
+  };
+  window.closeModal = function () { $("modal-root").innerHTML = ""; };
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeModal(); });
+
+  // ================= LOOPS =================
+  var tFast = null, tSlow = null;
+  function startLoops() {
+    stopLoops();
+    tFast = setInterval(function () {
+      if (document.hidden) return;
+      flushPending();
+      if (open) loadThread();
+    }, 3000);
+    tSlow = setInterval(function () {
+      if (document.hidden) return;
+      Promise.all([loadDmList(), loadGroups(), loadFriends(), loadUsers()]).then(function () { renderSide(); updateBadges(); });
+    }, 12000);
+  }
+  function stopLoops() { clearInterval(tFast); clearInterval(tSlow); }
+  document.addEventListener("visibilitychange", function () {
+    if (!document.hidden && me) { flushPending(); if (open) loadThread(); refreshAll(); }
+  });
+  window.addEventListener("online", function () { if (me) { flushPending(); refreshAll(); } });
+
+  // ================= START =================
+  if (SB.indexOf("PASTE_") === 0 || KEY.indexOf("PASTE_") === 0) {
+    authMsg("Setup needed: paste your Supabase Project URL and key at the top of the code (look for PASTE_YOUR_PROJECT_URL_HERE).");
+    $("li-btn").disabled = $("su-btn").disabled = true;
+    return;
+  }
+  var saved = ls("hd_session");
+  if (saved) {
+    // re-check the saved login quietly (ban or deleted account logs you out)
+    me = low(saved);
+    enterApp(me);
+    Promise.all([get("users?username=eq." + enc(me) + "&select=username", 10000), banStatus(me)]).then(function (r) {
+      if (!r[0].length) { logout(); authMsg("That account no longer exists."); }
+      else if (r[1]) { logout(); authMsg(r[1]); }
+    }).catch(function () {});
+  }
+  get("users?select=username&limit=1", 8000).catch(function () {});   // wake the server
+})();
+</script>
+</body>
+</html>
